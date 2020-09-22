@@ -53,6 +53,10 @@
   DECLARE_SERIAL_PORT_EXP(DGUS_SERIAL_PORT)
 #endif
 
+#if defined(ANYCUBIC_LCD_SERIAL_PORT)
+  DECLARE_SERIAL_PORT_EXP(ANYCUBIC_LCD_SERIAL_PORT)
+#endif
+
 void MarlinSerial::begin(unsigned long baud, uint8_t config) {
   HardwareSerial::begin(baud, config);
   // Replace the IRQ callback with the one we have defined

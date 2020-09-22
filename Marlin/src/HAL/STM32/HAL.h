@@ -119,6 +119,28 @@
   #define DGUS_SERIAL_GET_TX_BUFFER_FREE DGUS_SERIAL.availableForWrite
 #endif
 
+#ifdef ANYCUBIC_LCD_SERIAL_PORT
+  #if !WITHIN(ANYCUBIC_LCD_SERIAL_PORT, 1, 6)
+    #error "ANYCUBIC_LCD_SERIAL_PORT must be from 1 to 6. Please update your configuration."
+  #elif ANYCUBIC_LCD_SERIAL_PORT == SERIAL_PORT
+    #error "ANYCUBIC_LCD_SERIAL_PORT must be different than SERIAL_PORT. Please update your configuration."
+  #elif defined(SERIAL_PORT_2) && ANYCUBIC_LCD_SERIAL_PORT == SERIAL_PORT_2
+    #error "ANYCUBIC_LCD_SERIAL_PORT must be different than SERIAL_PORT_2. Please update your configuration."
+  #endif
+  #if ANYCUBIC_LCD_SERIAL_PORT == 1
+    #define ANYCUBIC_LCD_SERIAL MSerial1
+  #elif ANYCUBIC_LCD_SERIAL_PORT == 2
+    #define ANYCUBIC_LCD_SERIAL MSerial2
+  #elif ANYCUBIC_LCD_SERIAL_PORT == 3
+    #define ANYCUBIC_LCD_SERIAL MSerial3
+  #elif ANYCUBIC_LCD_SERIAL_PORT == 4
+    #define ANYCUBIC_LCD_SERIAL MSerial4
+  #elif ANYCUBIC_LCD_SERIAL_PORT == 5
+    #define ANYCUBIC_LCD_SERIAL MSerial5
+  #elif ANYCUBIC_LCD_SERIAL_PORT == 6
+    #define ANYCUBIC_LCD_SERIAL MSerial6
+  #endif
+#endif
 
 /**
  * TODO: review this to return 1 for pins that are not analog input

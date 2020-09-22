@@ -282,7 +282,12 @@
 //
 // LCDs and Controllers
 //
-#if HAS_SPI_LCD
+
+#if defined(ANYCUBIC_LCD_CHIRON)
+  #define BEEPER_PIN                        PG4
+#endif
+
+#if HAS_SPI_LCD 
   #define BEEPER_PIN                        PG4
   #define BTN_ENC                           PA8
 

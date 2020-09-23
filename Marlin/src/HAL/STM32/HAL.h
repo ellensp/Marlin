@@ -44,22 +44,15 @@
 // Defines
 // ------------------------
 
+#define _MSERIAL(X) MSerial##X
+#define MSERIAL(X) _MSERIAL(X)
+
 #if SERIAL_PORT == 0
   #error "SERIAL_PORT cannot be 0. (Port 0 does not exist.) Please update your configuration."
 #elif SERIAL_PORT == -1
   #define MYSERIAL0 SerialUSB
-#elif SERIAL_PORT == 1
-  #define MYSERIAL0 MSerial1
-#elif SERIAL_PORT == 2
-  #define MYSERIAL0 MSerial2
-#elif SERIAL_PORT == 3
-  #define MYSERIAL0 MSerial3
-#elif SERIAL_PORT == 4
-  #define MYSERIAL0 MSerial4
-#elif SERIAL_PORT == 5
-  #define MYSERIAL0 MSerial5
-#elif SERIAL_PORT == 6
-  #define MYSERIAL0 MSerial6
+#elif WITHIN(SERIAL_PORT, 1, 6)
+  #define MYSERIAL0 MSERIAL(SERIAL_PORT)
 #else
   #error "SERIAL_PORT must be from -1 to 6. Please update your configuration."
 #endif
@@ -72,18 +65,8 @@
     #error "SERIAL_PORT_2 must be different than SERIAL_PORT. Please update your configuration."
   #elif SERIAL_PORT_2 == -1
     #define MYSERIAL1 SerialUSB
-  #elif SERIAL_PORT_2 == 1
-    #define MYSERIAL1 MSerial1
-  #elif SERIAL_PORT_2 == 2
-    #define MYSERIAL1 MSerial2
-  #elif SERIAL_PORT_2 == 3
-    #define MYSERIAL1 MSerial3
-  #elif SERIAL_PORT_2 == 4
-    #define MYSERIAL1 MSerial4
-  #elif SERIAL_PORT_2 == 5
-    #define MYSERIAL1 MSerial5
-  #elif SERIAL_PORT_2 == 6
-    #define MYSERIAL1 MSerial6
+  #elif WITHIN(SERIAL_PORT_2, 1, 6)
+    #define MYSERIAL1 MSERIAL(SERIAL_PORT_2)
   #else
     #error "SERIAL_PORT_2 must be from -1 to 6. Please update your configuration."
   #endif
@@ -100,18 +83,8 @@
     #error "DGUS_SERIAL_PORT must be different than SERIAL_PORT_2. Please update your configuration."
   #elif DGUS_SERIAL_PORT == -1
     #define DGUS_SERIAL SerialUSB
-  #elif DGUS_SERIAL_PORT == 1
-    #define DGUS_SERIAL MSerial1
-  #elif DGUS_SERIAL_PORT == 2
-    #define DGUS_SERIAL MSerial2
-  #elif DGUS_SERIAL_PORT == 3
-    #define DGUS_SERIAL MSerial3
-  #elif DGUS_SERIAL_PORT == 4
-    #define DGUS_SERIAL MSerial4
-  #elif DGUS_SERIAL_PORT == 5
-    #define DGUS_SERIAL MSerial5
-  #elif DGUS_SERIAL_PORT == 6
-    #define DGUS_SERIAL MSerial6
+  #elif WITHIN(DGUS_SERIAL_PORT, 1, 6)
+    #define DGUS_SERIAL MSERIAL(SERIAL_PORT_2)
   #else
     #error "DGUS_SERIAL_PORT must be from -1 to 6. Please update your configuration."
   #endif
@@ -126,19 +99,8 @@
     #error "ANYCUBIC_LCD_SERIAL_PORT must be different than SERIAL_PORT. Please update your configuration."
   #elif defined(SERIAL_PORT_2) && ANYCUBIC_LCD_SERIAL_PORT == SERIAL_PORT_2
     #error "ANYCUBIC_LCD_SERIAL_PORT must be different than SERIAL_PORT_2. Please update your configuration."
-  #endif
-  #if ANYCUBIC_LCD_SERIAL_PORT == 1
-    #define ANYCUBIC_LCD_SERIAL MSerial1
-  #elif ANYCUBIC_LCD_SERIAL_PORT == 2
-    #define ANYCUBIC_LCD_SERIAL MSerial2
-  #elif ANYCUBIC_LCD_SERIAL_PORT == 3
-    #define ANYCUBIC_LCD_SERIAL MSerial3
-  #elif ANYCUBIC_LCD_SERIAL_PORT == 4
-    #define ANYCUBIC_LCD_SERIAL MSerial4
-  #elif ANYCUBIC_LCD_SERIAL_PORT == 5
-    #define ANYCUBIC_LCD_SERIAL MSerial5
-  #elif ANYCUBIC_LCD_SERIAL_PORT == 6
-    #define ANYCUBIC_LCD_SERIAL MSerial6
+  #else
+    #define ANYCUBIC_LCD_SERIAL MSERIAL(ANYCUBIC_LCD_SERIAL_PORT)
   #endif
 #endif
 

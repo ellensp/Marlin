@@ -89,8 +89,10 @@
  */
 #ifndef MOTHERBOARD
   #error "MOTHERBOARD is required. You must '#define MOTHERBOARD BOARD_MYNAME' (not just '#define BOARD_MYNAME')."
-#elif !defined(X_BED_SIZE) || !defined(Y_BED_SIZE)
-  #error "X_BED_SIZE and Y_BED_SIZE are now required!"
+#elif HAS_X_AXIS && !defined(X_BED_SIZE)
+  #error "X_BED_SIZE is required with an X_AXIS."
+#elif HAS_Y_AXIS && !defined(Y_BED_SIZE)
+  #error "Y_BED_SIZE is required with a Y_AXIS."
 #elif WATCH_TEMP_PERIOD > 500
   #error "WATCH_TEMP_PERIOD now uses seconds instead of milliseconds."
 #elif DISABLED(THERMAL_PROTECTION_HOTENDS) && (defined(WATCH_TEMP_PERIOD) || defined(THERMAL_PROTECTION_PERIOD))
@@ -856,7 +858,9 @@ static_assert(COUNT(arm) == LOGICAL_AXES, "AXIS_RELATIVE_MODES must contain " _L
 /**
  * Validate that the bed size fits
  */
-static_assert(X_MAX_LENGTH >= X_BED_SIZE, "Movement bounds (X_MIN_POS, X_MAX_POS) are too narrow to contain X_BED_SIZE.");
+#if HAS_X_AXIS
+  static_assert(X_MAX_LENGTH >= X_BED_SIZE, "Movement bounds (X_MIN_POS, X_MAX_POS) are too narrow to contain X_BED_SIZE.");
+#endif
 #if HAS_Y_AXIS
   static_assert(Y_MAX_LENGTH >= Y_BED_SIZE, "Movement bounds (Y_MIN_POS, Y_MAX_POS) are too narrow to contain Y_BED_SIZE.");
 #endif
@@ -3899,9 +3903,11 @@ static_assert(COUNT(sanity_arr_3) >= LOGICAL_AXES,  "DEFAULT_MAX_ACCELERATION re
 static_assert(COUNT(sanity_arr_3) <= DISTINCT_AXES, "DEFAULT_MAX_ACCELERATION has too many elements." _EXTRA_NOTE);
 static_assert(_PLUS_TEST(3), "DEFAULT_MAX_ACCELERATION values must be positive.");
 
-constexpr float sanity_arr_4[] = HOMING_FEEDRATE_MM_M;
-static_assert(COUNT(sanity_arr_4) == NUM_AXES,  "HOMING_FEEDRATE_MM_M requires " _NUM_AXES_STR "elements (and no others).");
-static_assert(_PLUS_TEST(4), "HOMING_FEEDRATE_MM_M values must be positive.");
+#if NUM_AXES
+  constexpr float sanity_arr_4[] = HOMING_FEEDRATE_MM_M;
+  static_assert(COUNT(sanity_arr_4) == NUM_AXES,  "HOMING_FEEDRATE_MM_M requires " _NUM_AXES_STR "elements (and no others).");
+  static_assert(_PLUS_TEST(4), "HOMING_FEEDRATE_MM_M values must be positive.");
+#endif
 
 #ifdef MAX_ACCEL_EDIT_VALUES
   constexpr float sanity_arr_5[] = MAX_ACCEL_EDIT_VALUES;
@@ -4098,7 +4104,7 @@ static_assert(_PLUS_TEST(4), "HOMING_FEEDRATE_MM_M values must be positive.");
   #if ENABLED(DUAL_X_CARRIAGE)
     #error "DUAL_X_CARRIAGE requires both MIN_ and MAX_SOFTWARE_ENDSTOPS."
   #elif HAS_HOTEND_OFFSET
-    #error "MIN_ and MAX_SOFTWARE_ENDSTOPS are both required with offset hotends."
+    #error "Multi-hotends with offset requires both MIN_ and MAX_SOFTWARE_ENDSTOPS."
   #endif
 #endif
 

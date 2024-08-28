@@ -204,3 +204,120 @@
 #define MISO_PIN                            PA6
 #define MOSI_PIN                            PA7
 #define SS_PIN                              PC4
+
+// STM32F103VET6  | DIGITAL       | ANALOG        | USART      | TWI       | SPI                  | SPECIAL    |
+//----------------|---------------|---------------|------------|-----------|----------------------|------------|
+//      PA0  0    |               |               |            |           |                      |            |
+//      PA1  1    |               |               |            |           |                      |            |
+//      PA2  2    |               |               | USART2_TX  |           |                      |            |
+//      PA3  3    |               |               | USART2_RX  |           |                      |            |
+//      PA4  4    | I SD_DETECT   |               |            |           |                      |            |
+//      PA5  5    | SD_CARD       |               |            |           | SPI1_SCK             |            |
+//      PA6  6    | SD_CARD       |               |            |           | SPI1_MISO            |            |
+//      PA7  7    | SD_CARD       |               |            |           | SPI1_MOSI            |            |
+//      PA8  8    | O  Z_ENABLE   |               |            |           |                      |            |
+//      PA9  9    |               |               |            |           |                      |            |
+//      PA10 10   | I FIL_RUNOUT  |               |            |           |                      |            |
+//      PA11 11   | I  Z_MIN      |               |            |           |                      |            |
+//      PA12 12   | O  PWM?       |               |            |           |                      | SERVO0     | sofware pwm?
+//      PA13 13   |               |               |            |           |                      | SWDIO      |
+//      PA14 14   |               |               |            |           |                      | SWCLK      |
+//      PA15 15   |               |               |            |           |                      |            |
+//                |---------------|---------------|------------|-----------|----------------------|------------|
+//      PB0  16   | ? WIFI-CPI00  |               |            |           |                      |            |
+//      PB1  17   | O  LCD_PINS_D7|               |            |           |                      |            |
+//      PB2  18   | O  LCD_PINS_D6|               |            |           |                      |            |
+//      PB3  19   |               |               |            |           |                      |            |
+//      PB4  20   | O  FAN1       |               |            |           |                      |            |
+//      PB5  21   | O  FAN0       |               |            |           |                      |            |
+//      PB6  22   |               |               |            |           |                      |            |
+//      PB7  23   |               |               |            |           |                      |            |
+//      PB8  24   |               |               |            |           |                      |            |
+//      PB9  25   | O FAN2        |               |            |           |                      |            |
+//      PB10 26   |               |               | USART3_TX  |           |                      |            |
+//      PB11 27   |               |               | USART3_RX  |           |                      |            |
+//      PB12 28   |               |               |            |           |                      |            |
+//      PB13 29   | O  E0_ENABLE  |               |            |           |                      |            |
+//      PB14 30   | O  X_DIR      |               |            |           |                      |            |
+//      PB15 31   | O  X_STOP     |               |            |           |                      |            |
+//                |---------------|---------------|------------|-----------|----------------------|------------|
+//      PC0  32   |               |               |            |           |                      |            |
+//      PC1  33   |               | A1 Nozzle T°c |            |           |                      |            |
+//      PC2  34   |               | A0 Bed T°c    |            |           |                      |            |
+//      PC3  35   |               | A3 Board T°c  |            |           |                      |            |
+//      PC4  36   | SD_CARD       |               |            |           | SS                   |            |
+//      PC5  37   |               |               |            |           |                      |            |
+//      PC6  38   | O  Y_ENABLE   |               |            |           |                      |            |
+//      PC7  39   | O  Z_DIR      |               |            |           |                      |            |
+//      PC8  40   | O  Z_STEP     |               |            |           |                      |            |
+//      PC9  41   |               |               |            |           |                      |            |
+//      PC10 42   | SPI UART      |               | UART4_TX   |           |                      |            |
+//      PC11 43   | SPI UART      |               | UART4_RX   |           |                      |            |
+//      PC12 44   |               |               |            |           |                      |            |
+//      PC13 45   |               |               |            |           |                      |            |
+//      PC14 46   |               |               |            |           |                      |            |
+//      PC15 47   |               |               |            |           |                      |            |
+//                |---------------|---------------|------------|-----------|----------------------|------------|
+//      PD0  48   |               |               |            |           |                      |            |
+//      PD1  49   |               |               |            |           |                      |            |
+//      PD2  50   |               |               |            |           |                      |            |
+//      PD3  51   |               |               |            |           |                      |            |
+//      PD4  52   |               |               |            |           |                      |            |
+//      PD5  53   |               |               |            |           |                      |            |
+//      PD6  54   |               |               |            |           |                      |            |
+//      PD7  55   |               |               |            |           |                      |            |
+//      PD8  56   | I  X_STOP     |               |            |           |                      |            |
+//      PD9  57   |               |               |            |           |                      |            |
+//      PD10 58   | O  X_ENABLE   |               |            |           |                      |            |
+//      PD11 59   | O  NOZZLE     |               |            |           |                      |            |
+//      PD12 60   | O  BED        |               |            |           |                      |            |
+//      PD13 61   | O  Y_DIR      |               |            |           |                      |            |
+//      PD14 62   | O  Y_STEP     |               |            |           |                      |            |
+//      PD15 63   | I  Y_STOP     |               |            |           |                      |            |
+//                |---------------|---------------|------------|-----------|----------------------|------------|
+//      PE0  64   |               |               |            |           |                      |            |
+//      PE1  65   |               |               |            |           |                      |            |
+//      PE2  66   |               |               |            |           |                      |            |
+//      PE3  67   | I  BTN_EN2    |               |            |           |                      |            |
+//      PE4  68   | I  BTN_EN1    |               |            |           |                      |            |
+//      PE5  69   |               |               |            |           |                      |            |
+//      PE6  70   |               |               |            |           |                      |            |
+//      PE7  71   | O  LCD_PINS_D5|               |            |           |                      |            |
+//      PE8  72   | O  LCD_PINS_D4|               |            |           |                      |            |
+//      PE9  73   | O  LCD_PINS_RS|               |            |           |                      |            |
+//      PE10 74   | O  LCD_PINS_EN|               |            |           |                      |            |
+//      PE11 75   | I  BTN_ENC    |               |            |           |                      |            |
+//      PE12 76   | O  BEEPER     |               |            |           |                      |            |
+//      PE13 77   | O  E0_STEP    |               |            |           |                      |            |
+//      PE14 78   | O  E0_DIR     |               |            |           |                      |            |
+//      PE15 79   |               |               |            |           |                      |            |
+//----------------|---------------|---------------|------------|-----------|----------------------|------------|
+
+/* NOTES to check
+#define PIN_SERIAL_RX           PA10
+#define PIN_SERIAL_TX           PA9
+
+#ifndef TIMER_TONE
+  #define TIMER_TONE            TIM6  // TIMER_TONE must be defined in this file
+#endif
+#ifndef TIMER_SERVO
+  #define TIMER_SERVO           TIM7  // TIMER_SERVO must be defined in this file
+#endif
+
+// I2C Definitions
+#define PIN_WIRE_SDA            PB7
+#define PIN_WIRE_SCL            PB6
+
+#define LED_BUILTIN             PB11
+
+// Extra HAL modules
+#if defined(STM32F103xE) || defined(STM32F103xG)
+#define HAL_DAC_MODULE_ENABLED
+#define HAL_SD_MODULE_ENABLED
+#define HAL_SRAM_MODULE_ENABLED
+#endif
+
+                     -DSS_TIMER=4
+                      -DTIMER_SERVO=TIM5
+                       -DMCU_STM32F103VE
+*/

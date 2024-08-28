@@ -27,8 +27,8 @@
 
 #include "env_validate.h"
 
-#if HOTENDS > 2 || E_STEPPERS > 2
-  #error "Eryone Ery32 mini supports up to 2 hotends / E steppers."
+#if HOTENDS > 1 || E_STEPPERS > 1
+  #error "Eryone Ery32 mini supports up to 1 hotends / E steppers."
 #endif
 
 #ifndef BOARD_INFO_NAME
@@ -56,8 +56,8 @@
 //
 #define X_STOP_PIN                          PD8
 #define Y_STOP_PIN                          PD15
-#define Z_MIN_PIN                           PA11
-//#define Z_MAX_PIN                         PB1
+#define Z_STOP_PIN                          PA9
+#define Z_MIN_PROBE_PIN                     PA11
 
 //
 // Steppers
@@ -78,51 +78,19 @@
 #define E0_DIR_PIN                          PE14
 #define E0_ENABLE_PIN                       PB13
 
-//#define E1_STEP_PIN                       PD13
-//#define E1_DIR_PIN                        PD12
-//#define E1_ENABLE_PIN                     PC6
-
 //
 // Heaters 0,1 / Fans / Bed
 //
 #define HEATER_0_PIN                        PD11
-
-#if ENABLED(FET_ORDER_EFB)                        // Hotend, Fan, Bed
-  #define HEATER_BED_PIN                    PD12
-#elif ENABLED(FET_ORDER_EEF)                      // Hotend, Hotend, Fan
-  #define HEATER_1_PIN                      PD4
-#elif ENABLED(FET_ORDER_EEB)                      // Hotend, Hotend, Bed
-  #define HEATER_1_PIN                      PD4
-  #define HEATER_BED_PIN                    PD12
-#elif ENABLED(FET_ORDER_EFF)                      // Hotend, Fan, Fan
-  #define FAN1_PIN                          PD12
-#elif DISABLED(FET_ORDER_SF)                      // Not Spindle, Fan (i.e., "EFBF" or "EFBE")
-  #define HEATER_BED_PIN                    PD12
-  #if ANY(HAS_MULTI_HOTEND, HEATERS_PARALLEL)
-    #define HEATER_1_PIN                    PB9
-  #else
-    #define FAN1_PIN                        PB9
-  #endif
-#endif
-
+#define HEATER_BED_PIN                      PD12
 #ifndef FAN0_PIN
-  #if ANY(FET_ORDER_EFB, FET_ORDER_EFF)           // Hotend, Fan, Bed or Hotend, Fan, Fan
-    #define FAN0_PIN                        PB5
-  #elif ANY(FET_ORDER_EEF, FET_ORDER_SF)          // Hotend, Hotend, Fan or Spindle, Fan
-    #define FAN0_PIN                        PD12
-  #elif ENABLED(FET_ORDER_EEB)                    // Hotend, Hotend, Bed
-    #define FAN0_PIN                        -1    // IO pin. Buffer needed
-  #else                                           // Non-specific are "EFB" (i.e., "EFBF" or "EFBE")
-    #define FAN0_PIN                        PB5
-  #endif
+  #define FAN0_PIN                          PB5
 #endif
+#define FAN1_PIN                            PB4
+#define FAN2_PIN                            PB9
 
 #define FAN_SOFT_PWM_REQUIRED
 
-//
-// Misc. Functions
-//
-//#define PS_ON_PIN                         PB9
 
 #if HAS_TMC_UART
   /**
@@ -160,11 +128,10 @@
 //
 #define TEMP_BED_PIN                        PC2   // TB
 #define TEMP_0_PIN                          PC1   // TH1
-//#define TEMP_1_PIN                        PC3   // TH2
 #define FIL_RUNOUT_PIN                      PA10  // MT_DET
 
 #ifndef TEMP_BOARD_PIN
-  #define TEMP_BOARD_PIN                    PC3
+  #define TEMP_BOARD_PIN                    PC3   // TH2
 #endif
 #if TEMP_BOARD_PIN == PC3 && TEMP_SENSOR_BOARD != 13
   #warning "The built-in TEMP_SENSOR_BOARD is 13 for ERYONE Ery32 mini."
@@ -294,8 +261,8 @@
 //----------------|---------------|---------------|------------|-----------|----------------------|------------|
 
 /* NOTES to check
-#define PIN_SERIAL_RX           PA10
-#define PIN_SERIAL_TX           PA9
+#define PIN_SERIAL_RX                       PA10
+#define PIN_SERIAL_TX                       PA9
 
 #ifndef TIMER_TONE
   #define TIMER_TONE            TIM6  // TIMER_TONE must be defined in this file
@@ -305,10 +272,10 @@
 #endif
 
 // I2C Definitions
-#define PIN_WIRE_SDA            PB7
-#define PIN_WIRE_SCL            PB6
+#define PIN_WIRE_SDA                        PB7
+#define PIN_WIRE_SCL                        PB6
 
-#define LED_BUILTIN             PB11
+#define LED_BUILTIN                         PB11
 
 // Extra HAL modules
 #if defined(STM32F103xE) || defined(STM32F103xG)

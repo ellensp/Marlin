@@ -91,7 +91,6 @@
 
 #define FAN_SOFT_PWM_REQUIRED
 
-
 #if HAS_TMC_UART
   /**
    * TMC2208/TMC2209 stepper drivers
@@ -140,6 +139,18 @@
 //
 // LCD Pins
 //
+
+/**
+ *              ------                                  ------
+ *(BEEPER) PE12 |1  2| PE11 (BTN_ENC)        (MISO) PA6 |1  2| PA5 (SCK)
+ *(LCD_EN) PE10 |3  4| PE9   (LCD_RS)     (BTN_EN1) PE4 |3  4|     (SD_SS)
+ *(LCD_D4) PE8   5  6| PE7   (LCD_D5)     (BTN_EN2) PE3  5  6| PA7 (MOSI)
+ *(LCD_D6) PB2  |7  8| PB1   (LCD_D7)   (SD_DETECT)     |7  8|     (RESET)
+ *         GND  |9 10| VCC                          GND |9 10|
+ *              ------                                  ------
+ *               Exp1                                    Exp2
+ */
+
 #if HAS_WIRED_LCD
   #define BEEPER_PIN                        PE12
   #define BTN_ENC                           PE11
@@ -194,9 +205,9 @@
 //      PB0  16   | ? WIFI-CPI00  |               |            |           |                      |            |
 //      PB1  17   | O  LCD_PINS_D7|               |            |           |                      |            |
 //      PB2  18   | O  LCD_PINS_D6|               |            |           |                      |            |
-//      PB3  19   |               |               |            |           |                      |            |
-//      PB4  20   | O  FAN1       |               |            |           |                      |            |
-//      PB5  21   | O  FAN0       |               |            |           |                      |            |
+//      PB3  19   |               |               |            |           | SPI3_SCK             |            |
+//      PB4  20   | O  FAN1       |               |            |           | SPI3_MISO            |            |
+//      PB5  21   | O  FAN0       |               |            |           | SPI3_MOSI            |            |
 //      PB6  22   |               |               |            |           |                      |            |
 //      PB7  23   |               |               |            |           |                      |            |
 //      PB8  24   |               |               |            |           |                      |            |

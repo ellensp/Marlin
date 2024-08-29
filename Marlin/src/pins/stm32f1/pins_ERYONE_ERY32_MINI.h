@@ -176,6 +176,7 @@
 //
 // SD Card
 //
+#define SDCARD_CONNECTION ONBOARD
 #define ENABLE_SPI1
 #define SD_DETECT_PIN                       PA4
 #define SCK_PIN                             PA5

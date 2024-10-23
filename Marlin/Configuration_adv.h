@@ -239,7 +239,7 @@
       #define CHAMBER_FAN_BASE  128   // Base chamber fan PWM (0-255)
       #define CHAMBER_FAN_FACTOR 25   // PWM increase per °C above target
     #endif
-  #endif
+#endif
 
   //#define CHAMBER_VENT              // Enable a servo-controlled vent on the chamber
   #if ENABLED(CHAMBER_VENT)
@@ -305,7 +305,11 @@
  * THERMAL_PROTECTION_HYSTERESIS and/or THERMAL_PROTECTION_PERIOD
  */
 #if ALL(HAS_HOTEND, THERMAL_PROTECTION_HOTENDS)
-  #define THERMAL_PROTECTION_PERIOD        40 // (seconds)
+  #if ANY(SOONGON_I3_SECTION_CODE, SOONGON_MINI_SECTION_CODE)
+    #define THERMAL_PROTECTION_PERIOD        60 // (seconds)
+  #else
+    #define THERMAL_PROTECTION_PERIOD        40 // (seconds)
+  #endif
   #define THERMAL_PROTECTION_HYSTERESIS     4 // (°C)
 
   //#define ADAPTIVE_FAN_SLOWING              // Slow down the part-cooling fan if the temperature drops
@@ -328,15 +332,20 @@
    * and/or decrease WATCH_TEMP_INCREASE. WATCH_TEMP_INCREASE should not be set
    * below 2.
    */
-  #define WATCH_TEMP_PERIOD  40               // (seconds)
-  #define WATCH_TEMP_INCREASE 2               // (°C)
+  #if ANY(SOONGON_I3_SECTION_CODE, SOONGON_MINI_SECTION_CODE)
+    #define WATCH_TEMP_PERIOD  30               // (seconds)
+    #define WATCH_TEMP_INCREASE 1               // (°C)
+  #else
+    #define WATCH_TEMP_PERIOD  40               // (seconds)
+    #define WATCH_TEMP_INCREASE 2               // (°C)
+  #endif
 #endif
 
 /**
  * Thermal Protection parameters for the bed are just as above for hotends.
  */
 #if TEMP_SENSOR_BED && ENABLED(THERMAL_PROTECTION_BED)
-  #define THERMAL_PROTECTION_BED_PERIOD        20 // (seconds)
+  #define THERMAL_PROTECTION_BED_PERIOD        30 // (seconds)
   #define THERMAL_PROTECTION_BED_HYSTERESIS     2 // (°C)
 
   /**
@@ -930,7 +939,11 @@
 
 //#define SENSORLESS_BACKOFF_MM  { 2, 2, 0 }  // (linear=mm, rotational=°) Backoff from endstops before sensorless homing
 
-#define HOMING_BUMP_MM      { 5, 5, 2 }       // (linear=mm, rotational=°) Backoff from endstops after first bump
+#if ALL(SOONGON_MINI_SECTION_CODE, SOONGON_Z_LIMIT_TEST)
+  #define HOMING_BUMP_MM      { 5, 5, 1 }       // (linear=mm, rotational=°) Backoff from endstops after first bump
+#else
+  #define HOMING_BUMP_MM      { 5, 5, 2 }       // (linear=mm, rotational=°) Backoff from endstops after first bump
+#endif
 #define HOMING_BUMP_DIVISOR { 2, 2, 4 }       // Re-Bump Speed Divisor (Divides the Homing Feedrate)
 
 //#define HOMING_BACKOFF_POST_MM { 2, 2, 2 }  // (linear=mm, rotational=°) Backoff from endstops after homing
@@ -1698,7 +1711,7 @@
 
   #if ANY(HAS_MARLINUI_HD44780, IS_TFTGLCD_PANEL)
     //#define LCD_PROGRESS_BAR            // Show a progress bar on HD44780 LCDs for SD printing
-    #if ENABLED(LCD_PROGRESS_BAR)
+  #if ENABLED(LCD_PROGRESS_BAR)
       #define PROGRESS_BAR_BAR_TIME 2000  // (ms) Amount of time to show the bar
       #define PROGRESS_BAR_MSG_TIME 3000  // (ms) Amount of time to show the status message
       #define PROGRESS_MSG_EXPIRE      0  // (ms) Amount of time to retain the status message (0=forever)
@@ -1731,7 +1744,11 @@
 
   #define SD_PROCEDURE_DEPTH 1              // Increase if you need more nested M32 calls
 
+#if ANY(SOONGON_I3_SECTION_CODE, SOONGON_MINI_SECTION_CODE)
+  #define SD_FINISHED_STEPPERRELEASE false  // Disable steppers when SD Print is finished
+#else
   #define SD_FINISHED_STEPPERRELEASE true   // Disable steppers when SD Print is finished
+#endif
   #define SD_FINISHED_RELEASECOMMAND "M84"  // Use "M84XYE" to keep Z enabled so your bed stays in place
 
   // Reverse SD sort to show "more recent" files first, according to the card's FAT.
@@ -1762,14 +1779,42 @@
    * an option on the LCD screen to continue the print from the last-known
    * point in the file.
    */
+#if ANY(SOONGON_I3_SECTION_CODE, SOONGON_MINI_SECTION_CODE)
+  #define POWER_LOSS_RECOVERY
+  #if ENABLED(POWER_LOSS_RECOVERY)
+    #define PLR_ENABLED_DEFAULT       true // Power-Loss Recovery enabled by default. (Set with 'M413 Sn' & M500)
+    //#define PLR_BED_THRESHOLD BED_MAXTEMP // (°C) Skip user confirmation at or above this bed temperature (0 to disable)
+
+    //#define POWER_LOSS_PIN             44 // Pin to detect power-loss. Set to -1 to disable default pin on boards without module, or comment to use board default.
+    //#define POWER_LOSS_STATE         HIGH // State of pin indicating power-loss
+    //#define POWER_LOSS_PULLUP             // Set pullup / pulldown as appropriate for your sensor
+    //#define POWER_LOSS_PULLDOWN
+
+    //#define POWER_LOSS_ZRAISE        2    // (mm) Z axis raise on resume (on power-loss with UPS)
+    #define POWER_LOSS_PURGE_LEN    20    // (mm) Length of filament to purge on resume
+    // Without a POWER_LOSS_PIN the following option helps reduce wear on the SD card,
+    // especially with "vase mode" printing. Set too high and vases cannot be continued.
+    #define POWER_LOSS_MIN_Z_CHANGE    0.05 // (mm) Minimum Z change before saving power-loss data
+
+    //#define BACKUP_POWER_SUPPLY           // Backup power / UPS to move the steppers on power-loss
+    #if ENABLED(BACKUP_POWER_SUPPLY)
+      //#define POWER_LOSS_RETRACT_LEN   10 // (mm) Length of filament to retract on fail
+    #endif
+
+    // Enable if Z homing is needed for proper recovery. 99.9% of the time this should be disabled!
+    //#define POWER_LOSS_RECOVER_ZHOME
+    #if ENABLED(POWER_LOSS_RECOVER_ZHOME)
+      //#define POWER_LOSS_ZHOME_POS { 0, 0 } // Safe XY position to home Z while avoiding objects on the bed
+    #endif
+  #endif
+#else
   //#define POWER_LOSS_RECOVERY
   #if ENABLED(POWER_LOSS_RECOVERY)
     #define PLR_ENABLED_DEFAULT       false // Power-Loss Recovery enabled by default. (Set with 'M413 Sn' & M500)
     //#define PLR_BED_THRESHOLD BED_MAXTEMP // (°C) Skip user confirmation at or above this bed temperature (0 to disable)
 
     //#define POWER_LOSS_PIN             44 // Pin to detect power-loss. Set to -1 to disable default pin on boards without module, or comment to use board default.
-    //#define POWER_LOSS_STATE         HIGH // State of pin indicating power-loss
-    //#define POWER_LOSS_PULLUP             // Set pullup / pulldown as appropriate for your sensor
+    //#define POWER_LOSS_STATE         HIGH // State of pin indicating power-loss      //#define POWER_LOSS_PULLUP             // Set pullup / pulldown as appropriate for your sensor
     //#define POWER_LOSS_PULLDOWN
 
     //#define POWER_LOSS_ZRAISE        2    // (mm) Z axis raise on resume (on power-loss with UPS)
@@ -1790,6 +1835,7 @@
       //#define POWER_LOSS_ZHOME_POS { 0, 0 } // Safe XY position to home Z while avoiding objects on the bed
     #endif
   #endif
+#endif
 
   /**
    * Sort SD file listings in alphabetical order.
@@ -1981,7 +2027,7 @@
   //#define XYZ_NO_FRAME
   #define XYZ_HOLLOW_FRAME
 
-  // A bigger font is available for edit items. Costs 3120 bytes of flash.
+    // A bigger font is available for edit items. Costs 3120 bytes of PROGMEM.
   // Western only. Not available for Cyrillic, Kana, Turkish, Greek, or Chinese.
   //#define USE_BIG_EDIT_FONT
 
@@ -2628,7 +2674,11 @@
 
 // The ASCII buffer for serial input
 #define MAX_CMD_SIZE 96
-#define BUFSIZE 4
+#if ANY(SOONGON_I3_SECTION_CODE, SOONGON_MINI_SECTION_CODE)
+  #define BUFSIZE 128
+#else
+  #define BUFSIZE 4
+#endif
 
 // Transmission to Host Buffer Size
 // To save 386 bytes of flash (and TX_BUFFER_SIZE+3 bytes of RAM) set to 0.
@@ -2891,7 +2941,7 @@
     //#define TOOLCHANGE_PARK_Y_ONLY          // Y axis only move
     #if ENABLED(TOOLCHANGE_MIGRATION_FEATURE)
       //#define TOOLCHANGE_MIGRATION_DO_PARK  // Force park (or no-park) on migration
-    #endif
+  #endif
   #endif
 #endif // HAS_MULTI_EXTRUDER
 
@@ -2908,14 +2958,22 @@
  *
  * Enable PARK_HEAD_ON_PAUSE to add the G-code M125 Pause and Park.
  */
-//#define ADVANCED_PAUSE_FEATURE
+#if ENABLED(SOONGON_I3_SECTION_CODE)
+  #define ADVANCED_PAUSE_FEATURE
+#else
+  //#define ADVANCED_PAUSE_FEATURE
+#endif
 #if ENABLED(ADVANCED_PAUSE_FEATURE)
   #define PAUSE_PARK_RETRACT_FEEDRATE         60  // (mm/s) Initial retract feedrate.
   #define PAUSE_PARK_RETRACT_LENGTH            2  // (mm) Initial retract.
                                                   // This short retract is done immediately, before parking the nozzle.
   #define FILAMENT_CHANGE_UNLOAD_FEEDRATE     10  // (mm/s) Unload filament feedrate. This can be pretty fast.
   #define FILAMENT_CHANGE_UNLOAD_ACCEL        25  // (mm/s^2) Lower acceleration may allow a faster feedrate.
-  #define FILAMENT_CHANGE_UNLOAD_LENGTH      100  // (mm) The length of filament for a complete unload.
+  #if ENABLED(SOONGON_I3_SECTION_CODE)
+    #define FILAMENT_CHANGE_UNLOAD_LENGTH      600  // (mm) The length of filament for a complete unload.
+  #else
+    #define FILAMENT_CHANGE_UNLOAD_LENGTH      100  // (mm) The length of filament for a complete unload.
+  #endif
                                                   //   For Bowden, the full length of the tube and nozzle.
                                                   //   For direct drive, the full length of the nozzle.
                                                   //   Set to 0 for manual unloading.
@@ -2928,8 +2986,13 @@
                                                   //   For Bowden, the full length of the tube and nozzle.
                                                   //   For direct drive, the full length of the nozzle.
   //#define ADVANCED_PAUSE_CONTINUOUS_PURGE       // Purge continuously up to the purge length until interrupted.
-  #define ADVANCED_PAUSE_PURGE_FEEDRATE        3  // (mm/s) Extrude feedrate (after loading). Should be slower than load feedrate.
+  #if ENABLED(SOONGON_I3_SECTION_CODE)
+    #define ADVANCED_PAUSE_PURGE_FEEDRATE        6  // (mm/s) Extrude feedrate (after loading). Should be slower than load feedrate.
+  #define ADVANCED_PAUSE_PURGE_LENGTH        500  // (mm) Length to extrude after loading.
+  #else
+    #define ADVANCED_PAUSE_PURGE_FEEDRATE        3  // (mm/s) Extrude feedrate (after loading). Should be slower than load feedrate.
   #define ADVANCED_PAUSE_PURGE_LENGTH         50  // (mm) Length to extrude after loading.
+  #endif
                                                   //   Set to 0 for manual extrusion.
                                                   //   Filament can be extruded repeatedly from the Filament Change menu
                                                   //   until extrusion is consistent, and to purge old filament.
@@ -2949,9 +3012,15 @@
   //#define PAUSE_REHEAT_FAST_RESUME              // Reduce number of waits by not prompting again post-timeout before continuing.
 
   //#define PARK_HEAD_ON_PAUSE                    // Park the nozzle during pause and filament change.
-  //#define HOME_BEFORE_FILAMENT_CHANGE           // If needed, home before parking for filament change
+  #if ENABLED(SOONGON_I3_SECTION_CODE)
+    #define HOME_BEFORE_FILAMENT_CHANGE           // If needed, home before parking for filament change
 
-  //#define FILAMENT_LOAD_UNLOAD_GCODES           // Add M701/M702 Load/Unload G-codes, plus Load/Unload in the LCD Prepare menu.
+    #define FILAMENT_LOAD_UNLOAD_GCODES           // Add M701/M702 Load/Unload G-codes, plus Load/Unload in the LCD Prepare menu.
+  #else
+    //#define HOME_BEFORE_FILAMENT_CHANGE           // If needed, home before parking for filament change
+
+    //#define FILAMENT_LOAD_UNLOAD_GCODES           // Add M701/M702 Load/Unload G-codes, plus Load/Unload in the LCD Prepare menu.
+  #endif
   //#define FILAMENT_UNLOAD_ALL_EXTRUDERS         // Allow M702 to unload all extruders above a minimum target temp (as set by M302)
   #define CONFIGURE_FILAMENT_CHANGE               // Add M603 G-code and menu items. Requires ~1.3K bytes of flash.
 #endif
@@ -3302,15 +3371,15 @@
    * When disabled, Marlin will use spreadCycle stepping mode.
    */
   #if HAS_STEALTHCHOP
-    #define STEALTHCHOP_XY
-    #define STEALTHCHOP_Z
+  #define STEALTHCHOP_XY
+  #define STEALTHCHOP_Z
     #define STEALTHCHOP_I
     #define STEALTHCHOP_J
     #define STEALTHCHOP_K
     #define STEALTHCHOP_U
     #define STEALTHCHOP_V
     #define STEALTHCHOP_W
-    #define STEALTHCHOP_E
+  #define STEALTHCHOP_E
   #endif
 
   /**
@@ -3693,12 +3762,12 @@
     * Consider material flammability, cut rate, and G-code order when setting this
     * value. Too low and it could turn off during a very slow move; too high and
     * the material could ignite.
-    */
+     */
     #define LASER_SAFETY_TIMEOUT_MS     1000   // (ms)
 
-    /**
+      /**
      * Any M3 or G1/2/3/5 command with the 'I' parameter enables continuous inline power mode.
-     *
+       *
      * e.g., 'M3 I' enables continuous inline power which is processed by the planner.
      * Power is stored in move blocks and applied when blocks are processed by the Stepper ISR.
      *
@@ -3718,10 +3787,10 @@
      * This feature enables any M3 S-value to be injected into the block buffers while in
      * CUTTER_MODE_CONTINUOUS. The option allows M3 laser power to be committed without waiting
      * for a planner synchronization
-     */
+       */
     //#define LASER_POWER_SYNC
 
-    /**
+      /**
      * Scale the laser's power in proportion to the movement rate.
      *
      * - Sets the entry power proportional to the entry speed over the nominal speed.
@@ -3753,12 +3822,12 @@
       #endif
     #endif
 
-  #endif
+      #endif
 #endif // SPINDLE_FEATURE || LASER_FEATURE
 
-/**
+      /**
  * Synchronous Laser Control with M106/M107
- *
+       *
  * Marlin normally applies M106/M107 fan speeds at a time "soon after" processing
  * a planner block. This is too inaccurate for a PWM/TTL laser attached to the fan
  * header (as with some add-on laser kits). Enable this option to set fan/laser
@@ -4330,8 +4399,8 @@
   #define MAX7219_DEBUG_PLANNER_TAIL  4   // Show the planner queue tail position on this and the next LED matrix row
 
   #define MAX7219_DEBUG_PLANNER_QUEUE 0   // Show the current planner queue depth on this and the next LED matrix row
-                                          // If you experience stuttering, reboots, etc. this option can reveal how
-                                          // tweaks made to the configuration are affecting the printer in real-time.
+                                         // If you experience stuttering, reboots, etc. this option can reveal how
+                                         // tweaks made to the configuration are affecting the printer in real-time.
   #define MAX7219_DEBUG_PROFILE       6   // Display the fraction of CPU time spent in profiled code on this LED matrix
                                           // row. By default idle() is profiled so this shows how "idle" the processor is.
                                           // See class CodeProfiler.
@@ -4422,15 +4491,15 @@
 
   // Options pertaining to MMU2 and MMU2S
   #if HAS_PRUSA_MMU2
-    // Enable if the MMU2 has 12V stepper motors (MMU2 Firmware 1.0.2 and up)
-    //#define MMU2_MODE_12V
+  // Enable if the MMU2 has 12V stepper motors (MMU2 Firmware 1.0.2 and up)
+  //#define MMU2_MODE_12V
 
     // Settings for filament load / unload from the LCD menu.
     // This is for Průša MK3-style extruders. Customize for your hardware.
     #define MMU2_FILAMENTCHANGE_EJECT_FEED 80.0
 
-    // G-code to execute when MMU2 F.I.N.D.A. probe detects filament runout
-    #define MMU2_FILAMENT_RUNOUT_SCRIPT "M600"
+  // G-code to execute when MMU2 F.I.N.D.A. probe detects filament runout
+  #define MMU2_FILAMENT_RUNOUT_SCRIPT "M600"
 
     // MMU2 sequences use mm/min. Not compatible with MMU3, which use mm/sec.
     #define MMU2_LOAD_TO_NOZZLE_SEQUENCE \
@@ -4588,7 +4657,7 @@
     //#define MMU2_EXTRUDER_SENSOR
     #if ENABLED(MMU2_EXTRUDER_SENSOR)
       #define MMU2_LOADING_ATTEMPTS_NR 5  // Number of times to try loading filament before failure
-    #endif
+  #endif
 
   #endif
 

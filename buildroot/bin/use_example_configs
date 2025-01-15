@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# use_example_configs [repo:]configpath
+# use_example_configs [-h] [--gui] [repo:]configpath
 #
 # Examples:
 #   use_example_configs

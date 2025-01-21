@@ -1,18 +1,6 @@
 #!/usr/bin/env python
 #
-# use_example_configs [-h] [--gui] [repo:]configpath
-#
-# Examples:
-#   use_example_configs
-#   use_example_configs Creality/CR-10/CrealityV1
-#   use_example_configs release-2.0.9.4:Creality/CR-10/CrealityV1
-#   use_example_configs --gui
-#
-# If a configpath has spaces (or quotes) escape them or enquote the path
-# If no branch: prefix is given use configs based on the current branch name.
-# e.g., For `latest-2.1.x` name the working branch something like "my_work-2.1.x."
-#       The branch or tag must first exist at MarlinFirmware/Configurations.
-#       The fallback branch is bugfix-2.1.x.
+# fetch_config_gui.py
 #
 
 import os, subprocess, sys, urllib.request, argparse, requests
@@ -262,94 +250,6 @@ def gui_mode():
 
 def main():
   fetch_configs(*gui_mode())
-
-if __name__ == "__main__":
-  main()
-#!/usr/bin/env python
-#
-# use_example_configs [repo:]configpath
-#
-# Examples:
-#   use_example_configs
-#   use_example_configs Creality/CR-10/CrealityV1
-#   use_example_configs release-2.0.9.4:Creality/CR-10/CrealityV1
-#
-# If a configpath has spaces (or quotes) escape them or enquote the path
-# If no branch: prefix is given use configs based on the current branch name.
-# e.g., For `latest-2.1.x` name the working branch something like "my_work-2.1.x."
-#       The branch or tag must first exist at MarlinFirmware/Configurations.
-#       The fallback branch is bugfix-2.1.x.
-#
-
-import os, subprocess, sys, urllib.request
-
-def get_current_branch():
-  try:
-    result = subprocess.run(['git', 'branch'], capture_output=True, text=True, check=True)
-    for line in result.stdout.splitlines():
-      if line.startswith('*'):
-        return line[2:]
-  except subprocess.CalledProcessError:
-    return None
-
-def fetch_configs(branch, config_path):
-  print(f"Fetching {config_path} configurations from {branch}...")
-  base_url = f"https://raw.githubusercontent.com/MarlinFirmware/Configurations/{branch}/config/{config_path}"
-  files = ["Configuration.h", "Configuration_adv.h", "_Bootscreen.h", "_Statusscreen.h"]
-  marlin_dir = os.path.join(os.getcwd(), "Marlin")
-  if not os.path.exists(marlin_dir):
-    print(f"Directory {marlin_dir} does not exist.")
-    sys.exit(1)
-  for file in files:
-    url = f"{base_url}/{file}"
-    dest_file = os.path.join(marlin_dir, file)
-    if os.getenv('DEBUG', '0') == '1':
-      print(f"Fetching {file} from {url} to {dest_file}")
-    try:
-      urllib.request.urlretrieve(url, dest_file)
-    except urllib.error.HTTPError as e:
-      if e.code == 404:
-        if os.getenv('DEBUG', '0') == '1':
-          print(f"File {file} not found (404), skipping.")
-      else:
-        raise
-
-def main():
-  branch = get_current_branch()
-  if not branch:
-    print("Not a git repository or no branch found.")
-    sys.exit(1)
-
-  if branch.startswith("bugfix-2."):
-    branch = branch
-  elif branch.endswith("-2.1.x") or branch == "2.1.x":
-    branch = "latest-2.1.x"
-  elif branch.endswith("-2.0.x") or branch == "2.0.x":
-    branch = "latest-2.0.x"
-  elif branch.endswith("-1.1.x") or branch == "1.1.x":
-    branch = "latest-1.1.x"
-  elif branch.endswith("-1.0.x") or branch == "1.0.x":
-    branch = "latest-1.0.x"
-  else:
-    branch = "bugfix-2.1.x"
-
-  if len(sys.argv) > 1:
-    arg = sys.argv[1]
-    if ':' in arg:
-      part1, part2 = arg.split(':', 1)
-      config_path = part2
-      branch = part1
-    else:
-      config_path = arg
-    config_path = 'examples/'+config_path.replace(' ', '%20')
-  else:
-    config_path = "default"
-
-  try:
-    subprocess.run(['restore_configs'], check=True)
-  except FileNotFoundError:
-    print("restore_configs not found, skipping.")
-  fetch_configs(branch, config_path)
 
 if __name__ == "__main__":
   main()

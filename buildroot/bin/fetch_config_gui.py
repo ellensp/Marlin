@@ -62,14 +62,19 @@ def gui_mode(no_filter):
 
   def exit_gui_and_download():
     nonlocal config_path, branch, vendor, model
-    if branch == "":
-      display_error("Select a branch.")
+    if DEBUG:
+      print("Exit GUI and download")
+      print(f"Branch: {branch}")
+      print(f"Vendor: {vendor}")
+      print(f"Model: {model}")
+    if branch == "" :
+      display_error("Select a Branch.")
       return
-    if vendor == "":
-      display_error("Select a vendor.")
+    if vendor == "" or vendor == "Select A Branch":
+      display_error("Select a Vendor.")
       return
     if model == "":
-      display_error("Select A Vendor.")
+      display_error("Select A Model.")
       return
     config_path = f"{vendor}/{model}"
     root.quit()

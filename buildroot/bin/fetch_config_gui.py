@@ -3,7 +3,7 @@
 # fetch_config_gui.py
 #
 
-import os, subprocess, sys, urllib.request, argparse, requests
+import os, sys, urllib.request, argparse, requests
 import tkinter as tk
 
 DEBUG = False
@@ -31,7 +31,7 @@ def fetch_configs(branch, config_path):
       else:
         raise
 
-def gui_mode():
+def gui_mode(no_filter):
   BRANCHES_GITHUB_API_URL = "https://api.github.com/repos/MarlinFirmware/Configurations/branches"
   PATHS_GITHUB_API_URL = "https://api.github.com/repos/MarlinFirmware/Configurations/git/trees"
 
@@ -94,8 +94,11 @@ def gui_mode():
         non_bugfix_branches = [branch for branch in branches_data if not branch['name'].startswith('bugfix')]
         branches_data = bugfix_branches + non_bugfix_branches
 
-      ignore_list = ["import","init"]
-      branches = [branch['name'] for branch in branches_data if not any(ignore in branch['name'] for ignore in ignore_list)]
+      if no_filter:
+        branches = [branch['name'] for branch in branches_data]
+      else:
+        ignore_list = ["import","init"]
+        branches = [branch['name'] for branch in branches_data if not any(ignore in branch['name'] for ignore in ignore_list)]
     except requests.RequestException as e:
       print(f"Error fetching branches: {e}")
       exit(1)
@@ -198,7 +201,6 @@ def gui_mode():
   branch_label.pack(side=tk.TOP, padx=5)
   branch_scrollbar = tk.Scrollbar(branch_frame, orient=tk.VERTICAL, takefocus=False)
   branch_listbox = tk.Listbox(branch_frame, width=29, yscrollcommand=branch_scrollbar.set)
-  branch_listbox = tk.Listbox(branch_frame, width=29)
   branch_listbox.focus_set()
   branch_scrollbar.config(command=branch_listbox.yview)
   branch_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
@@ -249,7 +251,15 @@ def gui_mode():
   return branch, 'examples/' + config_path
 
 def main():
-  fetch_configs(*gui_mode())
+  def parse_args():
+    parser = argparse.ArgumentParser(description="Fetch Marlin configuration files.")
+    parser.add_argument('--no-filter', action='store_true', help="Do not filter branches.")
+    return parser.parse_args()
+
+  args = parse_args()
+  no_filter = args.no_filter
+
+  fetch_configs(*gui_mode(no_filter))
 
 if __name__ == "__main__":
   main()

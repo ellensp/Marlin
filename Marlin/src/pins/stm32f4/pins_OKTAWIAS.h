@@ -49,30 +49,30 @@
 // X Axis
 #define X_STEP_PIN                          PB13
 #define X_DIR_PIN                           PB14
-#define X_ENABLE_PIN                        PB12
+#define X_ENABLE_PIN                        -1
 #define X_SERIAL_TX_PIN                     PB12
-#define X_SERIAL_RX_PIN                     PB12
+#define X_SERIAL_RX_PIN          X_SERIAL_TX_PIN
 
 // Y Axis
 #define Y_STEP_PIN                          PA8
 #define Y_DIR_PIN                           PA9
-#define Y_ENABLE_PIN                        PB15
+#define Y_ENABLE_PIN                        -1
 #define Y_SERIAL_TX_PIN                     PB15
-#define Y_SERIAL_RX_PIN                     PB15
+#define Y_SERIAL_RX_PIN          Y_SERIAL_TX_PIN
 
 // Z Axis
 #define Z_STEP_PIN                          PB3   // PA11  needs updated
 #define Z_DIR_PIN                           PB4   // PA12  needs updated
-#define Z_ENABLE_PIN                        PA10
+#define Z_ENABLE_PIN                        -1
 #define Z_SERIAL_TX_PIN                     PA10
-#define Z_SERIAL_RX_PIN                     PA10
+#define Z_SERIAL_RX_PIN          Z_SERIAL_TX_PIN
 
 // E0 Extruder
 #define E0_STEP_PIN                         PB3
 #define E0_DIR_PIN                          PB4
-#define E0_ENABLE_PIN                       PA15
+#define E0_ENABLE_PIN                       -1
 #define E0_SERIAL_TX_PIN                    PA15
-#define E0_SERIAL_RX_PIN                    PA15
+#define E0_SERIAL_RX_PIN        E0_SERIAL_TX_PIN
 
 // ---------------------------
 // Heaters

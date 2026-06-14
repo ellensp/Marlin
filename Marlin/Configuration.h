@@ -76,8 +76,8 @@
   #define U8GLIB_SSD1306
 // Enable encoder and MarlinUI menu support
   #define IS_ULTIPANEL 1       // enable encoder
-  #define HAS_MARLINUI_MENU 1 // enable MarlinUI menu support (requires MarlinUI to be enabled in Configuration_adv.h)
-/*
+  #define HAS_MARLINUI_MENU 1  // enable MarlinUI menu support
+  
  * In Marlin/src/pins/ramps/pins_RAMPS.h it defaults to using the following for the encoder and beeper pins:
  * 
  *  #define BTN_EN1              EXP1_01_PIN

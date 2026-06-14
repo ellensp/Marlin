@@ -78,7 +78,7 @@
   #define IS_ULTIPANEL 1       // enable encoder
   #define HAS_MARLINUI_MENU 1  // enable MarlinUI menu support
   
- * In Marlin/src/pins/ramps/pins_RAMPS.h it defaults to using the following for the encoder and beeper pins:
+/* In Marlin/src/pins/ramps/pins_RAMPS.h it defaults to using the following for the encoder and beeper pins:
  * 
  *  #define BTN_EN1              EXP1_01_PIN
  *  #define BTN_EN2              EXP1_02_PIN

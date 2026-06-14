@@ -69,6 +69,33 @@
 // Choose the name from boards.h that matches your setup
 #ifndef MOTHERBOARD
   #define MOTHERBOARD BOARD_RAMPS_14_EFB
+
+// Enable SD support  
+  #define SDSUPPORT
+// Enable the SSD1306 OLED full graphics generic display  
+  #define U8GLIB_SSD1306
+// Enable encoder and MarlinUI menu support
+  #define IS_ULTIPANEL 1       // enable encoder
+  #define HAS_MARLINUI_MENU 1 // enable MarlinUI menu support (requires MarlinUI to be enabled in Configuration_adv.h)
+/*
+ * In Marlin/src/pins/ramps/pins_RAMPS.h it defaults to using the following for the encoder and beeper pins:
+ * 
+ *  #define BTN_EN1              EXP1_01_PIN
+ *  #define BTN_EN2              EXP1_02_PIN
+ *  #define BTN_ENC              EXP2_03_PIN
+ *  #define BEEPER_PIN           EXP2_05_PIN
+ *
+ * So to change the pins used we define new EXP pins
+ *
+ */
+
+  #define EXP1_08_PIN -1      // flag to allow AUX pin definitions in config for RAMPS 
+  #define EXP1_01_PIN AUX4_09 // 37 - BTN_EN1
+  #define EXP1_02_PIN AUX4_10 // 35 - BTN_EN2
+  #define EXP2_03_PIN AUX4_11 // 33 - BTN_ENC
+  #define EXP2_05_PIN AUX4_12 // 31 - BEEPER_PIN
+  #define SD_DETECT_PIN AUX4_13 // 28 - SD_DETECT_PIN if requred
+
 #endif
 
 // @section serial

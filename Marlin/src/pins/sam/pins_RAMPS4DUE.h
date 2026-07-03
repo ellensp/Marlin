@@ -49,4 +49,38 @@
 #define TEMP_1_PIN                            -1  // Analog Input
 #define TEMP_BED_PIN                          10  // Analog Input
 
+#if HAS_SPI_TFT
+  #define LCD_PINS_DEFINED
+#endif
+
 #include "../ramps/pins_RAMPS.h"
+
+#if HAS_SPI_TFT
+  #define LCD_BACKLIGHT_PIN          EXP1_03_PIN
+
+  //#define TOUCH_CS_PIN               EXP1_05_PIN  // SPI1_NSS
+  //#define TOUCH_SCK_PIN              EXP2_02_PIN  // SPI1_SCK
+  //#define TOUCH_MISO_PIN             EXP2_01_PIN  // SPI1_MISO
+  //#define TOUCH_MOSI_PIN             EXP2_06_PIN  // SPI1_MOSI
+
+  //#define BTN_EN1                    EXP2_03_PIN
+  //#define BTN_EN2                    EXP2_05_PIN
+  //#define BTN_ENC                    EXP1_02_PIN
+
+  #define TFT_CS_PIN                 EXP1_07_PIN
+  #define TFT_SCK_PIN                EXP2_02_PIN
+  #define TFT_MISO_PIN               EXP2_01_PIN
+  #define TFT_MOSI_PIN               EXP2_06_PIN
+  #define TFT_DC_PIN                 EXP1_08_PIN
+  #define TFT_A0_PIN                  TFT_DC_PIN
+
+  #define TFT_RESET_PIN              EXP1_04_PIN
+  #define TFT_BACKLIGHT_PIN    LCD_BACKLIGHT_PIN
+
+  //#define TOUCH_BUTTONS_HW_SPI
+  #define TOUCH_BUTTONS_HW_SPI_DEVICE          1
+
+  #define LCD_USE_DMA_SPI
+
+#endif
+

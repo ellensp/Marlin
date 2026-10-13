@@ -117,12 +117,21 @@
   #endif
 #endif
 
+#if ENABLED(USE_CONTROLLER_FAN) && !defined(CONTROLLER_FAN_PIN) && !PIN_EXISTS(FAN1) && !PIN_EXISTS(HEATER_1)
+  #define CONTROLLER_FAN_PIN                PB9   // Board fan
+#endif
+
 #define FAN_SOFT_PWM_REQUIRED
 
 //
 // Misc. Functions
 //
 //#define PS_ON_PIN                         PB9
+
+// Eryone factory firmware drives PB8 HIGH at all times (configured as an inverted, unused heater output)
+#ifndef BOARD_PREINIT
+  #define BOARD_PREINIT() OUT_WRITE(PB8, HIGH)
+#endif
 
 #if HAS_TMC_UART
   /**

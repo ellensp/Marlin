@@ -931,6 +931,8 @@
   #include "esp32/pins_ESP32S3.h"                   // ESP32-S3                             env:esp32s3_idf4
 #elif MB(ESPRESSIF_ESP32S2)
   #include "esp32/pins_ESP32S2.h"                   // ESP32-S2                             env:esp32s2_idf4
+#elif MB(THREEBEE)
+  #include "esp32/pins_THREEBEE.h"                  // ESP32-S3                             env:threebee
 
 //
 // Adafruit Grand Central M4 (SAMD51 ARM Cortex-M4)

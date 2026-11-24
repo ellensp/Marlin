@@ -150,6 +150,8 @@ void noTone(const pin_t _pin);
 int8_t get_pwm_channel(const pin_t pin, const uint32_t freq, const uint16_t res);
 // Start a hardware serial port used by TMC drivers
 void tmc_hw_serial_begin(HardwareSerial &serial, const uint32_t baud);
+#include "TMCMuxSerial.h"
+inline void tmc_hw_serial_begin(TMCMuxSerial &serial, const uint32_t baud) { serial.begin(baud); } // TMC_UART_GPIO_MUX
 #define TMC_HW_SERIAL_BEGIN(S, B) tmc_hw_serial_begin(S, B)
 
 void analogWrite(const pin_t pin, const uint16_t value, const uint32_t freq=PWM_FREQUENCY, const uint16_t res=8);

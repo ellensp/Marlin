@@ -49,6 +49,10 @@
   #error "TMC220x Software Serial is not supported on ESP32."
 #endif
 
+#if ENABLED(TMC_UART_GPIO_MUX) && (SERIAL_PORT == 1 || SERIAL_PORT_2 == 1 || SERIAL_PORT_3 == 1 || LCD_SERIAL_PORT == 1)
+  #error "TMC_UART_GPIO_MUX uses UART1. Use another serial port for SERIAL_PORT, SERIAL_PORT_2, SERIAL_PORT_3 and LCD_SERIAL_PORT."
+#endif
+
 #if ENABLED(POSTMORTEM_DEBUGGING)
   #error "POSTMORTEM_DEBUGGING is not yet supported on ESP32."
 #endif
@@ -96,6 +100,8 @@
   #error "BOARD_ESPRESSIF_ESP32S3 requires an ESP32-S3 environment (env:esp32s3_idf4)."
 #elif MB(ESPRESSIF_ESP32S2) && !CONFIG_IDF_TARGET_ESP32S2
   #error "BOARD_ESPRESSIF_ESP32S2 requires an ESP32-S2 environment (env:esp32s2_idf4)."
+#elif MB(THREEBEE) && !CONFIG_IDF_TARGET_ESP32S3
+  #error "BOARD_THREEBEE requires its ESP32-S3 environment (env:threebee)."
 #endif
 
 #if CONFIG_IDF_TARGET_ESP32S2

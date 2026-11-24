@@ -552,6 +552,7 @@
 #define BOARD_BTT_RODENT_V1           7013  // BigTreeTech Rodent V1.0/V1.1 CNC controller based on ESP32 (with I2S stepper stream)
 #define BOARD_ESPRESSIF_ESP32S3       7014  // Generic ESP32-S3
 #define BOARD_ESPRESSIF_ESP32S2       7015  // Generic ESP32-S2
+#define BOARD_THREEBEE                7016  // ThreeBee based on ESP32-S3 (with I2S stepper stream)
 
 //
 // SAMD51 ARM Cortex-M4

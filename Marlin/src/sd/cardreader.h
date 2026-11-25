@@ -389,8 +389,6 @@ private:
       // Pointers to static or dynamic arrays of sorted names
       #if ENABLED(SDSORT_CACHE_NAMES)
         static char (*sortshort)[SORTED_SHORTNAME_STORAGE];
-      #endif
-      #if ENABLED(SDSORT_CACHE_NAMES) || DISABLED(SDSORT_USES_STACK)
         static char (*sortnames)[SORTED_LONGNAME_STORAGE];
       #endif
 

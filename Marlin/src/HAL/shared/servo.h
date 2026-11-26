@@ -88,6 +88,8 @@
   #include "../ESP32/Servo.h"
 #elif defined(__PLAT_RP2040__)
  #include "../RP2040/Servo.h"
+#elif defined(__PLAT_RP2350__)
+ #include "../RP2350/Servo.h"
 #elif defined(__PLAT_NATIVE_SIM__)
  #include "../NATIVE_SIM/Servo.h"
 #else

@@ -1006,6 +1006,15 @@
   #include "rp2040/pins_BTT_SKR_Pico.h"             // RP2040                               env:SKR_Pico env:SKR_Pico_UART
 
 //
+// Raspberry Pi RP2350
+//
+
+#elif MB(RP2350)
+  #include "rp2350/pins_RP2350.h"                   // RP2350                               env:RP2350
+#elif MB(RASPBERRY_PI_PICO2)
+  #include "rp2350/pins_RASPBERRY_PI_PICO2.h"       // RP2350                               env:RP2350
+
+//
 // Custom board (with custom PIO env)
 //
 

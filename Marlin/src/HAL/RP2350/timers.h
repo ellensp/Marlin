@@ -54,7 +54,7 @@
 typedef uint32_t hal_timer_t;
 #define HAL_TIMER_TYPE_MAX hal_timer_t(UINT32_MAX)
 
-#define HAL_TIMER_RATE         2000000  // (Hz) TIMER1 tick rate, divided down from clk_ref
+#define HAL_TIMER_RATE         12000000 // (Hz) TIMER1 tick rate, one tick per clk_ref cycle (12MHz crystal)
 
 // Timer Index is the TIMER1 alarm number (0-3)
 #ifndef MF_TIMER_STEP
@@ -75,6 +75,12 @@ typedef uint32_t hal_timer_t;
 #endif
 #ifndef TEMP_TIMER_IRQ_PRIO
   #define TEMP_TIMER_IRQ_PRIO  0xC0
+#endif
+
+// The Stepper ISR is not called again until 1/HAL_STEP_TIMER_SHARE of the time it just ran
+// has passed, so that lower priority interrupts and the main loop keep running.
+#ifndef HAL_STEP_TIMER_SHARE
+  #define HAL_STEP_TIMER_SHARE 8
 #endif
 
 #define TEMP_TIMER_RATE        HAL_TIMER_RATE

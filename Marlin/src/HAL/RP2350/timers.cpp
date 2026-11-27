@@ -56,8 +56,28 @@ FORCE_INLINE static void HAL_timer_irq(const uint8_t timer_num) {
 #define _HAL_TIMER_CALLBACK(T) HAL_timer_##T##_callback()
 #define HAL_TIMER_CALLBACK(T) _HAL_TIMER_CALLBACK(T)
 
-static void HAL_timer_step_irq() { HAL_timer_irq(MF_TIMER_STEP); HAL_TIMER_CALLBACK(MF_TIMER_STEP); }
 static void HAL_timer_temp_irq() { HAL_timer_irq(MF_TIMER_TEMP); HAL_TIMER_CALLBACK(MF_TIMER_TEMP); }
+
+/**
+ * Stepper interrupt entry. An overloaded Stepper ISR can run for hundreds of µs and then ask
+ * to be called again 1µs later, which is over before a lower priority interrupt can start.
+ * As the most urgent interrupt it would then take all of the CPU and stop the Temperature
+ * ISR (and thermal protection), USB and the main loop.
+ * So it is not called again until a share of the time it just used has passed. For a short
+ * ISR that is a fraction of a µs. It only stretches moves that already could not keep up.
+ */
+static void HAL_timer_step_irq() {
+  const hal_timer_t start = HAL_TIMER_HW->timerawl;
+  HAL_timer_irq(MF_TIMER_STEP);
+  HAL_TIMER_CALLBACK(MF_TIMER_STEP);
+
+  const hal_timer_t compare = HAL_timer_compare[MF_TIMER_STEP];
+  if (compare != HAL_TIMER_TYPE_MAX) {
+    const hal_timer_t spent = hal_timer_t(HAL_TIMER_HW->timerawl) - start,
+                      soonest = HAL_timer_get_count(MF_TIMER_STEP) + spent / (HAL_STEP_TIMER_SHARE);
+    if (compare < soonest) HAL_timer_set_compare(MF_TIMER_STEP, soonest);
+  }
+}
 
 static void HAL_timer_claim(const uint8_t timer_num, const irq_handler_t handler, const uint8_t priority) {
   timer_hardware_alarm_claim(HAL_TIMER_HW, timer_num);

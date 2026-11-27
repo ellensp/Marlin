@@ -118,8 +118,15 @@ struct PinsDebug : PinsDebugBase<PinsDebug> {
   static constexpr uint8_t name_pad = 33;   // space needed to be pretty if not first name assigned to a pin
 
   static bool is_valid(const pin_t pin) { return WITHIN(pin, 0, pin_t(count - 1)); }
-  static int16_t analog_index(const pin_t pin) { return digital_pin_to_analog_pin(pin); }
-  static bool is_analog(const pin_t pin) { return analog_index(pin) >= 0; }
+  // The core's analogRead() takes a GPIO number, and the shared code passes it analog_index()
+  static bool is_analog(const pin_t pin) { return digital_pin_to_analog_pin(pin) >= 0; }
+  static int16_t analog_index(const pin_t pin) { return is_analog(pin) ? int16_t(pin) : -1; }
+
+  static void print_analog(const pin_t pin) {
+    char buffer[20];
+    sprintf_P(buffer, PSTR(" (A%2d)  "), int(digital_pin_to_analog_pin(pin)));
+    SERIAL_ECHO(buffer);
+  }
 
   static bool is_output(const pin_t pin) {
     const uint8_t pin_mode = get_pin_mode(pin);

@@ -25,8 +25,30 @@
 
 #include "../../inc/MarlinConfig.h"
 
-void FastIO_init() {
+uint64_t fastio_od_pins = 0;
 
+void FastIO_init() {}
+
+void fastio_set_mode(const uint8_t io, const PinMode mode) {
+  fastio_od_pins &= ~(1ULL << io);
+  pinMode(io, mode);
+}
+
+/**
+ * pinMode(OUTPUT) drives the pin low before its level can be set. To go straight to the
+ * wanted level, make the pin a floating GPIO input, set the latch, then enable the output.
+ */
+void fastio_out_write(const uint8_t io, const bool v) {
+  fastio_od_pins &= ~(1ULL << io);
+  if (gpio_get_function(io) != GPIO_FUNC_SIO || !gpio_is_dir_out(io)) pinMode(io, INPUT);
+  gpio_put(io, v);
+  gpio_set_dir(io, true);
+}
+
+void fastio_out_write_od(const uint8_t io, const bool v) {
+  pinMode(io, INPUT);   // A floating GPIO input with the latch low
+  fastio_od_pins |= 1ULL << io;
+  fastio_write(io, v);
 }
 
 #endif // __PLAT_RP2350__

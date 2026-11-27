@@ -50,28 +50,47 @@ void FastIO_init(); // Must be called before using fast io macros
   #define PWM OUTPUT
 #endif
 
-// Direct SIO register access. The pin must already be a GPIO (see pinMode / _SET_MODE).
-// Unlike digitalWrite, writing to an input pin only sets its output latch; it doesn't change pulls or direction.
-#define _WRITE(IO, V)           gpio_put((IO), (V))
+/**
+ * WRITE, READ and TOGGLE use the SIO registers directly. The pin must already be a GPIO.
+ * Unlike digitalWrite, writing to an input pin only sets its output latch. It doesn't
+ * change the pin's pulls or direction.
+ *
+ * Open-drain outputs are emulated, as the pads have no open-drain mode. The output latch
+ * stays low and the pin direction is switched: output to pull the line low, input to release it.
+ */
+extern uint64_t fastio_od_pins;   // Pins set up as open-drain outputs
+
+void fastio_set_mode(const uint8_t io, const PinMode mode);   // pinMode, for a push-pull output or an input
+void fastio_out_write(const uint8_t io, const bool v);        // Become a push-pull output with no glitch
+void fastio_out_write_od(const uint8_t io, const bool v);     // Become an open-drain output
+
+FORCE_INLINE static void fastio_write(const uint8_t io, const bool v) {
+  if (fastio_od_pins & (1ULL << io)) gpio_set_dir(io, !v); else gpio_put(io, v);
+}
+FORCE_INLINE static void fastio_toggle(const uint8_t io) {
+  if (fastio_od_pins & (1ULL << io)) gpio_set_dir(io, !gpio_is_dir_out(io)); else gpio_put(io, !gpio_get_out_level(io));
+}
+
+#define _WRITE(IO, V)           fastio_write((IO), (V))
 #define _READ(IO)               gpio_get(IO)
-#define _TOGGLE(IO)             gpio_put((IO), !gpio_get_out_level(IO))
+#define _TOGGLE(IO)             fastio_toggle(IO)
 
 #define _GET_MODE(IO)           gpio_is_dir_out(IO)
-#define _SET_MODE(IO,M)         pinMode(IO, M)
-#define _SET_OUTPUT(IO)         pinMode(IO, OUTPUT)                               //!< Output Push Pull Mode & GPIO_NOPULL
-#define _SET_OUTPUT_OD(IO)      pinMode(IO, OUTPUT_OPEN_DRAIN)
+#define _SET_MODE(IO,M)         fastio_set_mode(IO, M)
+#define _SET_OUTPUT(IO)         _SET_MODE(IO, OUTPUT)                             //!< Output Push Pull Mode & GPIO_NOPULL
 
 #define WRITE(IO,V)             _WRITE(IO,V)
 #define READ(IO)                _READ(IO)
 #define TOGGLE(IO)              _TOGGLE(IO)
 
-#define OUT_WRITE(IO,V)         do{ _SET_OUTPUT(IO); WRITE(IO,V); }while(0)
-#define OUT_WRITE_OD(IO,V)      do{ _SET_OUTPUT_OD(IO); WRITE(IO,V); }while(0)
+#define OUT_WRITE(IO,V)         fastio_out_write((IO), (V))
+#define OUT_WRITE_OD(IO,V)      fastio_out_write_od((IO), (V))
 
 #define SET_INPUT(IO)           _SET_MODE(IO, INPUT)                              //!< Input Floating Mode
 #define SET_INPUT_PULLUP(IO)    _SET_MODE(IO, INPUT_PULLUP)                       //!< Input with Pull-up activation
 #define SET_INPUT_PULLDOWN(IO)  _SET_MODE(IO, INPUT_PULLDOWN)                     //!< Input with Pull-down activation
 #define SET_OUTPUT(IO)          OUT_WRITE(IO, LOW)
+#define SET_OUTPUT_OD(IO)       OUT_WRITE_OD(IO, LOW)
 #define SET_PWM(IO)             _SET_MODE(IO, PWM)
 
 #define IS_INPUT(IO)            !gpio_is_dir_out(IO)

@@ -170,9 +170,18 @@ void MarlinHAL::adc_enable(const pin_t pin) {
     adc_gpio_init(pin);
 }
 
-void MarlinHAL::adc_start(const pin_t pin) { adc_select_input(adc_channel(pin)); }
+static uint8_t adc_selected;
 
-uint16_t MarlinHAL::adc_value() { return adc_read(); }
+void MarlinHAL::adc_start(const pin_t pin) {
+  adc_selected = adc_channel(pin);
+  adc_select_input(adc_selected);
+}
+
+uint16_t MarlinHAL::adc_value() {
+  // An analogRead() from the main loop (e.g., M43) may have switched the input since adc_start
+  if (adc_get_selected_input() != adc_selected) adc_select_input(adc_selected);
+  return adc_read();
+}
 
 // Reboot into the UF2 bootloader to initiate a firmware flash
 void flashFirmware(const int16_t) { reset_usb_boot(0, 0); }

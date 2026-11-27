@@ -57,6 +57,9 @@ jobs:
         # RP2040
         - SKR_Pico
 
+        # RP2350
+        - RP2350
+
         # Native
         - linux_native
         - simulator_linux_release

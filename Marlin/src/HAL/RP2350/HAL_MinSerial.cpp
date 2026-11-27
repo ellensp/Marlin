@@ -29,6 +29,10 @@
 
 #include "../shared/MinSerial.h"
 
+#include <hardware/exception.h>
+
+extern "C" void CommonHandler_ASM();
+
 static void TXBegin() {
   #if SERIAL_PORT == -1
     USBSerial.begin(BAUDRATE);
@@ -57,6 +61,11 @@ static void TX(char b) {
 void install_min_serial() {
   HAL_min_serial_init = &TXBegin;
   HAL_min_serial_out = &TX;
+
+  // Route faults to Marlin's handler. The SDK keeps its vector table in RAM and names the
+  // vectors differently from CMSIS, so the handler is installed here and not by symbol name.
+  // MemManage, BusFault and UsageFault are not enabled, so they all arrive as a HardFault.
+  exception_set_exclusive_handler(HARDFAULT_EXCEPTION, CommonHandler_ASM);
 }
 
 #endif // POSTMORTEM_DEBUGGING

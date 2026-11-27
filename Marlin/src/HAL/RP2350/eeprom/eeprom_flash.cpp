@@ -28,6 +28,7 @@
 #if ENABLED(FLASH_EEPROM_EMULATION)
 
 #include "../../shared/eeprom_api.h"
+#include "../../../module/planner.h"
 
 // NOTE: The Bigtreetech SKR Pico has an onboard W25Q16 flash module
 
@@ -60,6 +61,10 @@ bool PersistentStore::access_start() {
 
 bool PersistentStore::access_finish() {
   if (eeprom_data_written) {
+    // Flash can't be read while it is erased, so nothing can run for about 25ms,
+    // including the Stepper ISR. Let any motion finish first.
+    planner.synchronize();
+
     TERN_(HAS_PAUSE_SERVO_OUTPUT, PAUSE_SERVO_OUTPUT());
 
     // Disable interrupts during flash write

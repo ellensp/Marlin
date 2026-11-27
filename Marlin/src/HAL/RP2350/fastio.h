@@ -62,6 +62,7 @@ extern uint64_t fastio_od_pins;   // Pins set up as open-drain outputs
 
 void fastio_set_mode(const uint8_t io, const PinMode mode);   // pinMode, for a push-pull output or an input
 void fastio_out_write(const uint8_t io, const bool v);        // Become a push-pull output with no glitch
+void fastio_set_output(const uint8_t io);                     // Become a push-pull output. An output keeps its level.
 void fastio_out_write_od(const uint8_t io, const bool v);     // Become an open-drain output
 
 FORCE_INLINE static void fastio_write(const uint8_t io, const bool v) {
@@ -89,7 +90,7 @@ FORCE_INLINE static void fastio_toggle(const uint8_t io) {
 #define SET_INPUT(IO)           _SET_MODE(IO, INPUT)                              //!< Input Floating Mode
 #define SET_INPUT_PULLUP(IO)    _SET_MODE(IO, INPUT_PULLUP)                       //!< Input with Pull-up activation
 #define SET_INPUT_PULLDOWN(IO)  _SET_MODE(IO, INPUT_PULLDOWN)                     //!< Input with Pull-down activation
-#define SET_OUTPUT(IO)          OUT_WRITE(IO, LOW)
+#define SET_OUTPUT(IO)          fastio_set_output(IO)
 #define SET_OUTPUT_OD(IO)       OUT_WRITE_OD(IO, LOW)
 #define SET_PWM(IO)             _SET_MODE(IO, PWM)
 

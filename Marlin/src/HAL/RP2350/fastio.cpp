@@ -45,6 +45,16 @@ void fastio_out_write(const uint8_t io, const bool v) {
   gpio_set_dir(io, true);
 }
 
+/**
+ * SET_OUTPUT on a pin that is already a push-pull output leaves its level alone, as on
+ * other platforms. Several axes can share one enable pin, and each of them calls
+ * SET_OUTPUT and then sets the level, which would pulse the pin low once per axis.
+ */
+void fastio_set_output(const uint8_t io) {
+  if (!(fastio_od_pins & (1ULL << io)) && gpio_get_function(io) == GPIO_FUNC_SIO && gpio_is_dir_out(io)) return;
+  fastio_out_write(io, LOW);
+}
+
 void fastio_out_write_od(const uint8_t io, const bool v) {
   pinMode(io, INPUT);   // A floating GPIO input with the latch low
   fastio_od_pins |= 1ULL << io;
